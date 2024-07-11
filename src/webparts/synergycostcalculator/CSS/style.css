@@ -1,0 +1,104 @@
+.form-title{
+    text-align: center;
+    font-size: 2.3rem;
+    background-color: #f1f1f1;
+}
+.light-box-dark {
+    margin: 15px;
+    background-color: white;
+    border: 1px solid #ececec;
+    box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
+    -webkit-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
+    -ms-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
+    -moz-box-shadow: 0px 10px 24px 0 rgba(0, 0, 0, 0.09);
+    transition: all .4s ease 0s;
+    -webkit-transition: all .4s ease 0s;
+}
+.light-box {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+}
+.c-table {
+    border: 1px solid lightgray;
+}
+#pageTitle{
+    display:none;
+}
+.validator-focus{
+    border-bottom: 0; 
+
+    box-shadow: 0 0 0 0.1rem rgba(223,43,42,.50);
+    -webkit-box-shadow: 0 0 0 0.1rem rgba(223,43,42,.50);         
+}
+.text-validator{
+    color: rgb(223,43,42);
+    margin: 1rem;
+    padding: .25rem;
+    font-family: sans-serif;
+    transition: all .4s ease 0s;
+    -webkit-transition: all .4s ease 0s;  
+}
+.note{
+    background-color: rgba(0, 128, 180, 0.16);
+    color: rgb(0, 128, 180);
+    text-align: center;
+    border-left: 2px solid;
+}
+.btn-outline-success {
+    /* color: #28a745;
+    border-color: #28a745; */
+    color: #572ba7;
+    border-color: #572ba7;
+}
+.mandatoryhastrick{
+    color: red;
+    font-size: 1rem;
+}
+.bc-dblue {
+    background-color: #565757!important;
+/* background-color: #4597D3!important; */
+}
+.bc-burgundy {
+background-color: rgb(109, 61, 76)!important;
+}
+.txt-white {
+color: rgb(255, 255, 255)!important;
+}
+.btn-outline-success:hover {
+    color: #fff;
+    background-color: #572ba7!important;
+    border-color: #572ba7!important;
+}
+.modal-header {
+padding: 0.5rem!important;
+}
+/* Loader css start */
+.cc-loading{
+    /* display: none; */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: all .6s ease-in-out;
+    -webkit-transition: all .6s ease-in-out;
+    -ms-transition: all .6s ease-in-out;
+    -moz-transition: all .6s ease-in-out;
+    z-index: 9;
+    background: rgba(255, 252, 252, 0.84);
+  }
+  .loader {
+  z-index: 9;
+  width: 60px;
+  height: 60px;
+  /* border: 3px solid rgb(223,43,42); */
+  border-left-color: transparent;
+  border-right-color: transparent;
+  -webkit-animation: spin 1s linear infinite, colors 5.6s linear infinite;
+  animation: spin 1s linear infinite, colors 5.6s linear infinite;
+  border-radius: 50%;
+  position: fixed;
+  left: 47.5%;
+  top: 43.5%;
+  }
+  /* loader css end */
