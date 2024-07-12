@@ -56,6 +56,12 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
             AdditionalCost_W2Hourly: '',
             AdditionalCost_W2HourlyPlus: '',
             AdditionalCost_Salary: '',
+            // 11 july 2024
+            AdditionalCostDolr_IndepSub: '',
+            AdditionalCostDolr_W2Hourly: '',
+            AdditionalCostDolr_W2HourlyPlus: '',
+            AdditionalCostDolr_Salary: '',
+            // ----
             MiscellaneousCost_IndepSub: '',
             MiscellaneousCost_W2Hourly: '',
             MiscellaneousCost_W2HourlyPlus: '',
@@ -230,10 +236,16 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                         IsW2Hourly: o.IsW2Hourly,
                         IsW2HourlyPlus: o.IsW2HourlyPlus,
                         IsSalary: o.IsSalary,
-                        AdditionalCost_IndepSub: o.AdditionalCost_IndepSub,
+                        AdditionalCost_IndepSub: o.AdditionalCost_IndepSub,            
                         AdditionalCost_W2Hourly: o.AdditionalCost_W2Hourly,
                         AdditionalCost_W2HourlyPlus: o.AdditionalCost_W2HourlyPlus,
                         AdditionalCost_Salary: o.AdditionalCost_Salary,
+                        // 11-july-2024
+                        AdditionalCostDolr_IndepSub: o.AdditionalCostDolr_IndepSub,
+                        AdditionalCostDolr_W2Hourly: o.AdditionalCostDolr_W2Hourly,
+                        AdditionalCostDolr_W2HourlyPlus: o.AdditionalCostDolr_W2HourlyPlus,
+                        AdditionalCostDolr_Salary: o.AdditionalCostDolr_Salary,
+                        //----
                         MinMarkup_IndepSub: o.MinMarkup_IndepSub,
                         MinMarkup_W2Hourly: o.MinMarkup_W2Hourly,
                         MinMarkup_W2HourlyPlus: o.MinMarkup_W2HourlyPlus,
@@ -288,6 +300,12 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                             AdditionalCost_W2Hourly: response.AdditionalCost_W2Hourly,
                             AdditionalCost_W2HourlyPlus: response.AdditionalCost_W2HourlyPlus,
                             AdditionalCost_Salary: response.AdditionalCost_Salary,
+                            // 11 july 2024
+                            AdditionalCostDolr_IndepSub: response.AdditionalCostDolr_IndepSub,
+                            AdditionalCostDolr_W2Hourly: response.AdditionalCostDolr_W2Hourly,
+                            AdditionalCostDolr_W2HourlyPlus: response.AdditionalCostDolr_W2HourlyPlus,
+                            AdditionalCostDolr_Salary: response.AdditionalCostDolr_Salary,    
+                            // 
                             MiscellaneousCost_IndepSub: response.MiscellaneousCost_IndepSub,
                             MiscellaneousCost_W2Hourly: response.MiscellaneousCost_W2Hourly,
                             MiscellaneousCost_W2HourlyPlus: response.MiscellaneousCost_W2HourlyPlus,
@@ -335,6 +353,12 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                 AdditionalCost_W2Hourly: '',
                 AdditionalCost_W2HourlyPlus: '',
                 AdditionalCost_Salary: '',
+                // 11 july 2024
+                AdditionalCostDolr_IndepSub: '',
+                AdditionalCostDolr_W2Hourly: '',
+                AdditionalCostDolr_W2HourlyPlus: '',
+                AdditionalCostDolr_Salary: '',    
+                //
                 MiscellaneousCost_IndepSub: '',
                 MiscellaneousCost_W2Hourly: '',
                 MiscellaneousCost_W2HourlyPlus: '',
@@ -546,6 +570,15 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                                                 {this.state.formData.IsW2HourlyPlus && <td><input className="form-control IsW2HourlyPlus" onChange={this.handleNumberChange} name='AdditionalCost_W2HourlyPlus' value={this.state.formData.AdditionalCost_W2HourlyPlus || ''} placeholder="" type="text" required aria-errormessage="'W2-Hourly Plus - Additional Cost' cannot be blank." maxLength={5} /></td>}
                                                 {this.state.formData.IsSalary && <td><input className="form-control IsSalary" onChange={this.handleNumberChange} name='AdditionalCost_Salary' value={this.state.formData.AdditionalCost_Salary || ''} placeholder="" type="text" required aria-errormessage="'Salary - Additional Cost' cannot be blank." maxLength={5} /></td>}
                                             </tr>
+                                            {/* 11 july 2024 */}
+                                            <tr>
+                                                <td className="pl-3">Additional Cost in dollors ($)</td>
+                                                {this.state.formData.IsIndepSub && <td><input className="form-control IsIndepSub" onChange={this.handleNumberChange} name='AdditionalCostDolr_IndepSub' value={this.state.formData.AdditionalCostDolr_IndepSub || ''} placeholder="" type="text" required aria-errormessage="'Indep/Sub - Additional Cost ($)' cannot be blank." maxLength={5} /></td>}
+                                                {this.state.formData.IsW2Hourly && <td><input className="form-control IsW2Hourly" onChange={this.handleNumberChange} name='AdditionalCostDolr_W2Hourly' value={this.state.formData.AdditionalCostDolr_W2Hourly || ''} placeholder="" type="text" required aria-errormessage="'W2-Hourly - Additional Cost ($)' cannot be blank." maxLength={5} /></td>}
+                                                {this.state.formData.IsW2HourlyPlus && <td><input className="form-control IsW2HourlyPlus" onChange={this.handleNumberChange} name='AdditionalCostDolr_W2HourlyPlus' value={this.state.formData.AdditionalCostDolr_W2HourlyPlus || ''} placeholder="" type="text" required aria-errormessage="'W2-Hourly Plus - Additional Cost ($)' cannot be blank." maxLength={5} /></td>}
+                                                {this.state.formData.IsSalary && <td><input className="form-control IsSalary" onChange={this.handleNumberChange} name='AdditionalCostDolr_Salary' value={this.state.formData.AdditionalCostDolr_Salary || ''} placeholder="" type="text" required aria-errormessage="'Salary - Additional Cost ($)' cannot be blank." maxLength={5} /></td>}
+                                            </tr>
+                                            {/* ---------------- */}
                                             <tr>
                                                 <td className="pl-3">Miscellaneous Cost (%)</td>
                                                 {this.state.formData.IsIndepSub && <td><input className="form-control IsIndepSub" onChange={this.handleNumberChange} name='MiscellaneousCost_IndepSub' value={this.state.formData.MiscellaneousCost_IndepSub || ''} placeholder="" type="text" required aria-errormessage="'Indep/Sub - Miscellaneous Cost' cannot be blank." maxLength={5} /></td>}

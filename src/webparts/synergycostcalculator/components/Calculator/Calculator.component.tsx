@@ -34,6 +34,10 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
                 whatSynergyGets_Round: 0,
                 additionalCost: 0,
                 additionalCost_Round: 0,
+                // 11 july 2024
+                additionalCostDollor: 0,
+                additionalCostDollor_Round:0,
+                // ---------
                 t12month18montRebate: 0,
                 t12month18montRebate_Round: 0,
                 actualCost: 0,
@@ -60,6 +64,10 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
                 whatSynergyGets_Round: 0,
                 additionalCost: 0,
                 additionalCost_Round: 0,
+                // 11 july 2024
+                additionalCostDollor: 0,
+                additionalCostDollor_Round:0,
+                // ---------
                 t12month18montRebate: 0,
                 t12month18montRebate_Round: 0,
                 actualCost: 0,
@@ -85,6 +93,10 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
                 whatSynergyGets_Round: 0,
                 additionalCost: 0,
                 additionalCost_Round: 0,
+                // 11 july 2024
+                additionalCostDollor: 0,
+                additionalCostDollor_Round:0,
+                // ---------
                 t12month18montRebate: 0,
                 t12month18montRebate_Round: 0,
                 actualCost: 0,
@@ -110,6 +122,10 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
                 whatSynergyGets_Round: 0,
                 additionalCost: 0,
                 additionalCost_Round: 0,
+                // 11 july 2024
+                additionalCostDollor: 0,
+                additionalCostDollor_Round:0,
+                // ---------
                 t12month18montRebate: 0,
                 t12month18montRebate_Round: 0,
                 actualCost: 0,
@@ -155,6 +171,7 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
             if (res.ok) {
                 res.json().then((response: any) => {
                     this.setState({ customers: response.value,loading:false });
+                    console.log(response);//12 july 2024
                     //return this.bindItemsToDropdown(response.value, 'Title', 'Title');
                 });
             }
@@ -171,6 +188,7 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
             return customer.Id == selectedValue;
         });
         let emptydata = this.getInitialState();
+        console.log("Selected customer",selectedCustomer);
         if (selectedCustomer && selectedCustomer.length > 0) {
             await this.setState({ data: emptydata }, () => {
                 this.selectedCustomer = selectedCustomer[0];
@@ -220,31 +238,38 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
         if (sectionName == 'candidatepay') {
             isCandidatePay = true;
         }
-        let additionalCostCurrentSection = 0;
+        let additionalCostCurrentSection = 0,additionalCostDollorCurrentSection = 0;
         let miscellaneousCostCurrentSection = 0;
         let immigrationCostCurrentSection = 0;
         enum costSections { 'Indep/Sub' = 'Indep/Sub', 'Salary' = 'Salary', 'W2-Hourly' = 'W2-Hourly', 'W2-Hourly-Plus' = 'W2-Hourly-Plus' }
         let additionalCostInternalColumn = "AdditionalCost_";
+        // 11 july 2024
+        let AdditionalCostDollorInternalColumn = "AdditionalCostDolr_";
+        //------
         let miscellaneousInternalColumn = "MiscellaneousCost_";
         let immigrationInternalColumn = "ImmigrationCost_";
         if (ctrlName == costSections['Indep/Sub']) {
             additionalCostInternalColumn += "IndepSub";
+            AdditionalCostDollorInternalColumn += "IndepSub";
             miscellaneousInternalColumn += "IndepSub";
             immigrationInternalColumn += "IndepSub";
         }
         else if (ctrlName == costSections.Salary) {
             additionalCostInternalColumn += "Salary";
+            AdditionalCostDollorInternalColumn +="Salary";
             miscellaneousInternalColumn += "Salary";
             immigrationInternalColumn += "Salary";
 
         }
         else if (ctrlName == costSections['W2-Hourly']) {
             additionalCostInternalColumn += "W2Hourly";
+            AdditionalCostDollorInternalColumn +="W2Hourly";
             miscellaneousInternalColumn += "W2Hourly";
             immigrationInternalColumn += "W2Hourly";
         }
         else if (ctrlName == costSections['W2-Hourly-Plus']) {
             additionalCostInternalColumn += "W2HourlyPlus";
+            AdditionalCostDollorInternalColumn +="W2HourlyPlus";
             miscellaneousInternalColumn += "W2HourlyPlus";
             immigrationInternalColumn += "W2HourlyPlus";
 
@@ -258,13 +283,32 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
         }
         let additionalCostListItemValue = this.selectedCustomer[additionalCostInternalColumn];
         additionalCostCurrentSection = !['0', '', null, undefined].includes(additionalCostListItemValue) ? (parseFloat(additionalCostListItemValue) * formState[ctrlName].cPay)/100 : 0;
+
+        // 11 july 2024
+        let additionalCostDollorListItemValue = this.selectedCustomer[AdditionalCostDollorInternalColumn];
+        additionalCostDollorCurrentSection =!['0', '', null, undefined].includes(additionalCostDollorListItemValue) ? (parseFloat(additionalCostDollorListItemValue)): 0;
+        console.log("additionalCostDollor",additionalCostDollorCurrentSection);
+        // -------------
+
         let processingCharges = (this.selectedCustomer.ProcessingCharges != '' && this.selectedCustomer.ProcessingCharges != '0') ? parseFloat(this.selectedCustomer.ProcessingCharges) / 100 : 0;
+        
         let mislaneousCostListItemValue = this.selectedCustomer[miscellaneousInternalColumn];
         miscellaneousCostCurrentSection = !['0', '', null, undefined].includes(mislaneousCostListItemValue) ? ((parseFloat(mislaneousCostListItemValue)) * formState[ctrlName].cPay)/100 : 0;
+
         let immigrationCostListItemValue = this.selectedCustomer[immigrationInternalColumn];
         immigrationCostCurrentSection = !['0', '', null, undefined].includes(immigrationCostListItemValue) ? parseFloat(immigrationCostListItemValue) : 0;
+
         let whatSynergyGetsValue = formState[ctrlName].submitedRate - (formState[ctrlName].submitedRate * processingCharges);
-        let actualCostValue = additionalCostCurrentSection + parseFloat(formState[ctrlName].cPay);
+        // // 11 july 2024
+        // let actualCostValue = additionalCostCurrentSection + parseFloat(formState[ctrlName].cPay) // adding additionalCostDollorCurrentSection to this to get total;
+        //re commented
+        // let actualCostValue = additionalCostCurrentSection + parseFloat(formState[ctrlName].cPay) +additionalCostDollorCurrentSection + parseFloat(formState[ctrlName].cPay);
+
+console.log("cuurentCpay:",formState[ctrlName].cPay,"additionalCostCurrentSection:",additionalCostCurrentSection);
+
+        let actualCostValue = additionalCostCurrentSection + parseFloat(formState[ctrlName].cPay) +additionalCostDollorCurrentSection;
+        console.log("actual cost",actualCostValue);
+        // // --------------
         let currentStateMinMarkup = parseFloat(formState[ctrlName].minPerMarkup);
         let currentStatePrefMinMarkup = parseFloat(formState[ctrlName].preferredMarkup);
         let minSellPrice = 0;
@@ -273,17 +317,26 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
             miscellaneousCostCurrentSection = miscellaneousCostCurrentSection + immigrationCostCurrentSection;
         }
         actualCostValue = actualCostValue + miscellaneousCostCurrentSection;
+        // // 11 july 2024
+        // actualCostDollorValue = actualCostDollorValue + miscellaneousCostCurrentSection
+        // // ---------
         formState[ctrlName].miscellaneousCost = this.textToNumber(miscellaneousCostCurrentSection);
         formState[ctrlName].miscellaneousCost_Round = this.roundofNumber(miscellaneousCostCurrentSection, 2);
         if (this.selectedCustomer.IsRebatesApplicable) {
             let rebateCharges = this.selectedCustomer.RebatesPercentage; //RebatesPercentage
             let rebateValue = formState[ctrlName].submitedRate * (rebateCharges / 100);
             actualCostValue = actualCostValue + rebateValue;
+            // // 11 july 2024
+            // actualCostDollorValue = actualCostDollorValue + rebateValue;
+            // // ----------------
             formState[ctrlName].t12month18montRebate = this.textToNumber(rebateValue);
             formState[ctrlName].t12month18montRebate_Round = this.roundofNumber(rebateValue, 2);
         }
         if (ctrlName == "Salary") {
             actualCostValue = actualCostValue / 1800;
+            // // 11 july 2024
+            // actualCostDollorValue = actualCostDollorValue/1800
+            // // ----
             minSellPrice = this.roundofNumber(actualCostValue, 2) * (1 + currentStateMinMarkup / 100);
             prefSellPrHr = this.roundofNumber(actualCostValue, 2) * (1 + currentStatePrefMinMarkup / 100);
         }
@@ -293,9 +346,15 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
         }
         formState[ctrlName].additionalCost = this.textToNumber(additionalCostCurrentSection);
         formState[ctrlName].additionalCost_Round = this.roundofNumber(additionalCostCurrentSection, 2);
+        
+        // 11 july 2024
+        formState[ctrlName].additionalCostDollor = this.textToNumber(additionalCostDollorCurrentSection);
+        formState[ctrlName].additionalCostDollor_Round = this.roundofNumber(additionalCostDollorCurrentSection, 2);
+        //--------------
 
         formState[ctrlName].actualCost = this.textToNumber(actualCostValue);
         formState[ctrlName].actualCost_Round = this.roundofNumber(actualCostValue, 2);
+
 
         formState[ctrlName].minsellPriceHr = this.textToNumber(minSellPrice);
         formState[ctrlName].minsellPriceHr_Round = this.roundofNumber(minSellPrice, 2);
@@ -385,6 +444,12 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
                     <td className="">Additional Cost</td>
                     {Object.keys(tdOptions).length > 0 ? Object.keys(tdOptions).map((key) => { return <td><span className="dollar">&#x00024;</span><NumberFormat displayType={'text'} thousandSeparator={true} value={this.state[key] ? this.state[key].additionalCost_Round : null} /></td>; }) : null}
                 </tr>
+                {/* 11 july 2024 */}
+                <tr>
+                    <td className="">Additional Cost in Dollars ($)</td>
+                    {Object.keys(tdOptions).length > 0 ? Object.keys(tdOptions).map((key) => { return <td><span className="dollar">&#x00024;</span><NumberFormat displayType={'text'} thousandSeparator={true} value={this.state[key] ? this.state[key].additionalCostDollor_Round : null} /></td>; }) : null}
+                </tr>
+                {/* ---------  */}
                 {this.selectedCustomer.IsRebatesApplicable ?
                     <tr>
                         <td className="font-weight-bold">12 Month &amp; 18 Month Rebates</td>
@@ -433,6 +498,7 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
                     <td>Profit Margin Pay vs. Rate:</td>
                     {Object.keys(tdOptions).length > 0 ? Object.keys(tdOptions).map((key) => { return <td className={this.state[key].profitMarginPay>=0?"font-color":"fred"}><NumberFormat displayType={'text'} thousandSeparator={true} value={this.state[key] ? this.state[key].profitMarginPay : null} />%</td>; }) : null}
                 </tr>
+                {console.log("Object Printing",Object.keys(tdOptions))}
             </tbody>
         </table></div>;
 
@@ -523,6 +589,7 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
                 formState["Salary"].preferredsellPriceHr = this.roundofNumber(prefSellPrHr, 2);
                 formState["Salary"].preferredsellPriceHrPlusFee = this.roundofNumber(prefSellPrHr + (prefSellPrHr * processingCharges), 2);
             }
+            console.log(formState);
             this.setState(formState);
         }
         else{
@@ -571,6 +638,7 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
                 formState["Salary"].preferredsellPriceHr = this.roundofNumber(prefSellPrHr, 2);
                 formState["Salary"].preferredsellPriceHrPlusFee = this.roundofNumber(prefSellPrHr + (prefSellPrHr * processingCharges), 2);
             }
+            console.log(formState);
             this.setState(formState);
         }
     }
