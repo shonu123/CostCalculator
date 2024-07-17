@@ -171,7 +171,7 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
             if (res.ok) {
                 res.json().then((response: any) => {
                     this.setState({ customers: response.value,loading:false });
-                    console.log(response);//12 july 2024
+                    // console.log(response);//12 july 2024
                     //return this.bindItemsToDropdown(response.value, 'Title', 'Title');
                 });
             }
@@ -188,7 +188,7 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
             return customer.Id == selectedValue;
         });
         let emptydata = this.getInitialState();
-        console.log("Selected customer",selectedCustomer);
+        // console.log("Selected customer",selectedCustomer);
         if (selectedCustomer && selectedCustomer.length > 0) {
             await this.setState({ data: emptydata }, () => {
                 this.selectedCustomer = selectedCustomer[0];
@@ -287,7 +287,7 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
         // 11 july 2024
         let additionalCostDollorListItemValue = this.selectedCustomer[AdditionalCostDollorInternalColumn];
         additionalCostDollorCurrentSection =!['0', '', null, undefined].includes(additionalCostDollorListItemValue) ? (parseFloat(additionalCostDollorListItemValue)): 0;
-        console.log("additionalCostDollor",additionalCostDollorCurrentSection);
+        // console.log("additionalCostDollor",additionalCostDollorCurrentSection);
         // -------------
 
         let processingCharges = (this.selectedCustomer.ProcessingCharges != '' && this.selectedCustomer.ProcessingCharges != '0') ? parseFloat(this.selectedCustomer.ProcessingCharges) / 100 : 0;
@@ -304,10 +304,10 @@ class Calculator extends React.Component<CalculatorProps, CalculatorState> {
         //re commented
         // let actualCostValue = additionalCostCurrentSection + parseFloat(formState[ctrlName].cPay) +additionalCostDollorCurrentSection + parseFloat(formState[ctrlName].cPay);
 
-console.log("cuurentCpay:",formState[ctrlName].cPay,"additionalCostCurrentSection:",additionalCostCurrentSection);
+// console.log("cuurentCpay:",formState[ctrlName].cPay,"additionalCostCurrentSection:",additionalCostCurrentSection);
 
         let actualCostValue = additionalCostCurrentSection + parseFloat(formState[ctrlName].cPay) +additionalCostDollorCurrentSection;
-        console.log("actual cost",actualCostValue);
+        // console.log("actual cost",actualCostValue);
         // // --------------
         let currentStateMinMarkup = parseFloat(formState[ctrlName].minPerMarkup);
         let currentStatePrefMinMarkup = parseFloat(formState[ctrlName].preferredMarkup);
@@ -498,7 +498,7 @@ console.log("cuurentCpay:",formState[ctrlName].cPay,"additionalCostCurrentSectio
                     <td>Profit Margin Pay vs. Rate:</td>
                     {Object.keys(tdOptions).length > 0 ? Object.keys(tdOptions).map((key) => { return <td className={this.state[key].profitMarginPay>=0?"font-color":"fred"}><NumberFormat displayType={'text'} thousandSeparator={true} value={this.state[key] ? this.state[key].profitMarginPay : null} />%</td>; }) : null}
                 </tr>
-                {console.log("Object Printing",Object.keys(tdOptions))}
+                {/* {console.log("Object Printing",Object.keys(tdOptions))} */}
             </tbody>
         </table></div>;
 
@@ -515,9 +515,9 @@ console.log("cuurentCpay:",formState[ctrlName].cPay,"additionalCostCurrentSectio
     public immcalculations=(ctrlName,processingCharges,immigrationCostCurrentSection,miscellaneousCostCurrentSection,formState) =>{
         formState[ctrlName].miscellaneousCost = this.roundofNumber(miscellaneousCostCurrentSection, 2);
         if(this.state.isImmigrantChecked)
-        formState[ctrlName].actualCost = this.roundofNumber(formState[ctrlName].actualCost + immigrationCostCurrentSection, 2);
+        formState[ctrlName].actualCost = this.roundofNumber(parseFloat(formState[ctrlName].actualCost) + immigrationCostCurrentSection, 2);
         else
-        formState[ctrlName].actualCost = this.roundofNumber(formState[ctrlName].actualCost - immigrationCostCurrentSection, 2);
+        formState[ctrlName].actualCost = this.roundofNumber(parseFloat(formState[ctrlName].actualCost) - immigrationCostCurrentSection, 2);
         let finalPercentageValue = formState[ctrlName].actualCost != 0 ? (formState[ctrlName].whatSynergyGets - formState[ctrlName].actualCost) / formState[ctrlName].actualCost : 0;
         finalPercentageValue = finalPercentageValue * 100;
         formState[ctrlName].profitMarginPay = this.roundofNumber(finalPercentageValue, 2);
@@ -575,7 +575,8 @@ console.log("cuurentCpay:",formState[ctrlName].cPay,"additionalCostCurrentSectio
                 miscellaneousCostCurrentSection = miscellaneousCostCurrentSection+immigrationCostCurrentSection;
                 
                 formState["Salary"].miscellaneousCost = this.roundofNumber(miscellaneousCostCurrentSection, 2);
-                formState["Salary"].actualCost = this.roundofNumber(formState["Salary"].actualCost + (immigrationCostCurrentSection/1800), 2);
+                let actualCostofSalary = Number(formState["Salary"].actualCost);
+                formState["Salary"].actualCost = this.roundofNumber(actualCostofSalary + (immigrationCostCurrentSection/1800), 2);
                 let finalPercentageValue = formState["Salary"].actualCost != 0 ? (formState["Salary"].whatSynergyGets - formState["Salary"].actualCost) / formState["Salary"].actualCost : 0;
                 finalPercentageValue = finalPercentageValue * 100;
                 formState["Salary"].profitMarginPay = this.roundofNumber(finalPercentageValue, 2);
@@ -589,7 +590,7 @@ console.log("cuurentCpay:",formState[ctrlName].cPay,"additionalCostCurrentSectio
                 formState["Salary"].preferredsellPriceHr = this.roundofNumber(prefSellPrHr, 2);
                 formState["Salary"].preferredsellPriceHrPlusFee = this.roundofNumber(prefSellPrHr + (prefSellPrHr * processingCharges), 2);
             }
-            console.log(formState);
+            // console.log(formState);
             this.setState(formState);
         }
         else{
@@ -624,7 +625,8 @@ console.log("cuurentCpay:",formState[ctrlName].cPay,"additionalCostCurrentSectio
                 let miscellaneousCostCurrentSection = !['0', '', null, undefined].includes(mislaneousCostListItemValue) ? ((parseFloat(mislaneousCostListItemValue)) * formState["Salary"].cPay)/100 : 0;
                 // miscellaneousCostCurrentSection = miscellaneousCostCurrentSection-immigrationCostCurrentSection;
                 formState["Salary"].miscellaneousCost = this.roundofNumber(miscellaneousCostCurrentSection, 2);
-                formState["Salary"].actualCost = this.roundofNumber(formState["Salary"].actualCost - (immigrationCostCurrentSection/1800), 2);
+                let actualCostofSalary = Number(formState["Salary"].actualCost);
+                formState["Salary"].actualCost = this.roundofNumber(actualCostofSalary - (immigrationCostCurrentSection/1800), 2);
                 let finalPercentageValue = formState["Salary"].actualCost != 0 ? (formState["Salary"].whatSynergyGets - formState["Salary"].actualCost) / formState["Salary"].actualCost : 0;
                 finalPercentageValue = finalPercentageValue * 100;
                 formState["Salary"].profitMarginPay = this.roundofNumber(finalPercentageValue, 2);
@@ -638,7 +640,7 @@ console.log("cuurentCpay:",formState[ctrlName].cPay,"additionalCostCurrentSectio
                 formState["Salary"].preferredsellPriceHr = this.roundofNumber(prefSellPrHr, 2);
                 formState["Salary"].preferredsellPriceHrPlusFee = this.roundofNumber(prefSellPrHr + (prefSellPrHr * processingCharges), 2);
             }
-            console.log(formState);
+            // console.log(formState);
             this.setState(formState);
         }
     }

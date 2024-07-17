@@ -78,8 +78,11 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
             PreferredMarkup_W2Hourly: '',
             PreferredMarkup_W2HourlyPlus: '',
             PreferredMarkup_Salary: '',
-            IsActive: true
+            Comments:'',
+            IsActive: true,
         },
+        AllCustomers:[],
+        AuditHistory:[],
         SaveUpdateText: 'Submit',
         customersData: [],
         showLabel: false,
@@ -152,21 +155,42 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
     }
     public handleSubmit = event => {
         event.preventDefault();
-        const body = { ...this.state.formData };
+        const formData = { ...this.state.formData };
         const id = this.props.match.params.id;
         //const {addToast} = useToasts();
         if (this.IsFormValid()) {
             this.setState({ loading: true });
+            // console.log("Client",this.state.formData.Title);
+            // console.log("allcustomers",this.state.AllCustomers);
+            let ActiveClients = this.state.AllCustomers.filter(item=>{
+                return (item.IsActive);
+            });
+            // console.log("Active Clients",ActiveClients);
+            let duplicate = ActiveClients.find(item=>{
+               return( item.Title.toLowerCase() ==  this.state.formData.Title);
+            });
+            // console.log("duplicate",duplicate);
             var query = "(Title eq '" + this.state.formData.Title + "' and IsActive eq 1)" + ((this.props.match.params.id !== undefined && this.props.match.params.id !== '') ? " and ID  ne " + this.props.match.params.id : "");
             sp.web.lists.getByTitle("Customers").items.select("Title", "IsActive", "ID").filter(query).getAll().then((dupres) => {
                 if (dupres.length > 0) {
-                    this.setState({ showLabel: true, errorMessage: "Client already exists'" });
-                    return;
+                    this.setState({ showLabel: true, errorMessage: "Client already exists'",loading: false });
+                    // console.log("duplicate client");
+                    return false;
                 }
                 else {
+                    formData.Comments =   !["",null,undefined].includes(formData.Comments)?this.state.formData.Comments.trim():'';
+                 let History = this.state.AuditHistory;
+
+                        History.push({
+                            User: this.props.spContext.userDisplayName,
+                            Comments: formData.Comments,
+                            Date: new Date().toISOString()
+                        });
+                        formData['AuditHistory'] = JSON.stringify(History);
+ 
                     if (id > 0) {                       //update existing record
-                        console.log(this.props);
-                        sp.web.lists.getByTitle('Customers').items.getById(id).update(body).then((res) => {
+                        // console.log(this.props);
+                        sp.web.lists.getByTitle('Customers').items.getById(id).update(formData).then((res) => {
                             this.setState({
                                 isSuccess: true,
                                 modalTitle: 'Updated successfully',
@@ -184,8 +208,8 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                     else {                             //Add New record
                         try {
                             this.setState({ loading: true });
-                            console.log(this.state);
-                            sp.web.lists.getByTitle('Customers').items.add({ ...this.state.formData })
+                            // console.log(this.state);
+                            sp.web.lists.getByTitle('Customers').items.add(formData)
                                 .then((res) => {
                                     this.loadListData();
                                     this.resetClientForm();
@@ -225,6 +249,7 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
     public loadListData = () => {
         sp.web.lists.getByTitle('Customers').items.getAll()
             .then((response) => {
+                // console.log("response",response);
                 this.setState({
                     //customersData: response.sort((a, b) => new Date(b.Modified).getTime() - new Date(a.Modified).getTime()).map(o => ({
                     customersData: response.sort((a, b) => {
@@ -261,8 +286,11 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                         ProcessingCharges: o.ProcessingCharges,
                         IsRebatesApplicable: true,
                         RebatesPercentage: o.RebatesPercentage,
+                        Comments:o.Comments,
+                        // AuditHistory: o.AuditHistory!=null?JSON.parse(o.AuditHistory):[],
                         IsActive: o.IsActive ? 'Yes' : 'No'
                     })),
+                    AllCustomers:response,
                     SaveUpdateText: 'Submit',
                     showLabel: false,
                     loading: false,
@@ -282,7 +310,7 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
     }
     public onEditClickHandler = (id) => {
         this.setState({ loading: true });
-        console.log('edit clicked', id);
+        // console.log('edit clicked', id);
         try {
             sp.web.lists.getByTitle('Customers').items.getById(id).get()
                 .then((response) => {
@@ -322,8 +350,10 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                             PreferredMarkup_W2Hourly: response.PreferredMarkup_W2Hourly,
                             PreferredMarkup_W2HourlyPlus: response.PreferredMarkup_W2HourlyPlus,
                             PreferredMarkup_Salary: response.PreferredMarkup_Salary,
+                            // Comments: response.Comments,
                             IsActive: response.IsActive
                         },
+                        AuditHistory: response.AuditHistory!=null?JSON.parse(response.AuditHistory):[],
                         SaveUpdateText: 'Update',
                         showLabel: false,
                         isListTable: false,
@@ -371,8 +401,10 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                 PreferredMarkup_W2Hourly: '',
                 PreferredMarkup_W2HourlyPlus: '',
                 PreferredMarkup_Salary: '',
+                Comments:'',
                 IsActive: true
             },
+            AuditHistory: [],
             SaveUpdateText: 'Submit'
         });
 
@@ -413,6 +445,33 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
     public resetRebate = (): void => {
         this.setState({ formData: { RebatesPercentage: '' } });
     }
+
+    private auditHistory = () => {
+        let body = [];
+        if (this.state.AuditHistory.length > 0) {
+            var History = this.state.AuditHistory;
+            for (let i = History.length - 1; i >= 0; i--) {
+                body.push(<tr>
+                    {/* <td className="" >{History[i]["Role"]}</td> */}
+                    <td className="" >
+                        {History[i]["User"]}
+                    </td>
+                    <td className="" >
+                        {(new Date(History[i]["Date"]).getMonth().toString().length == 1 ? "0" + (new Date(History[i]["Date"]).getMonth() + 1) : new Date(History[i]["Date"]).getMonth() + 1) + "/" + (new Date(History[i]["Date"]).getDate().toString().length == 1 ? "0" + new Date(History[i]["Date"]).getDate() : new Date(History[i]["Date"]).getDate()) + "/" + new Date(History[i]["Date"]).getFullYear()}  {"  " + new Date(History[i]["Date"]).toLocaleString('en-US', { timeZone: 'America/New_York', hour12: false }).split(",")[1]}
+                    </td>
+                    <td className="" >
+                        {History[i]["Comments"]}
+                    </td>
+                </tr>);
+            }
+        }
+        return body;
+    }
+
+    // User: this.props.spContext.userDisplayName,
+    //                         Comments: this.state.formData.Comments.trim(),
+    //                         Date: new Date().toISOString()
+
     public render() {
         const columns = [
             {
@@ -446,6 +505,11 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
             {
                 name: "12 Month & 18 Month Rebates",
                 selector: "RebatesPercentage",
+                sortable: true
+            },
+            {
+                name: "Comments",
+                selector: "Comments",
                 sortable: true
             },
             {
@@ -503,7 +567,7 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                                                 <input type="checkbox" className="custom-control-input" id="chkRebates" name='IsRebatesApplicable' onChange={this.handleChkChange} checked={this.state.formData.IsRebatesApplicable} />
                                                 <label className="custom-control-label ml-2 mt-3" htmlFor="chkRebates">Is 12 Month & 18 Month Rebates Applicable</label>
                                             </div>
-                                        </div>
+                                        </div>        
                                     </div>
                                     {this.state.formData.IsRebatesApplicable &&
                                         <div className="col-md-4">
@@ -513,6 +577,12 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                                             </div>
                                         </div>
                                     }
+                                       <div className="col-sm-8">
+                                                        <div className="light-text height-auto">
+                                                            <label className="floatingTextarea2 top-11" id='txtClientComments'>Comments</label>
+                                                            <textarea className="position-static form-control requiredinput mt-3" onChange={this.handleChange} value={this.state.formData.Comments} maxLength={500} id="txtComments" name="Comments" disabled={false} title='Comments'></textarea>
+                                                        </div>
+                                                    </div>
                                     <div className="col-sm-12">
                                         <div className="mt-1 px-3">
                                             <div className="row">
@@ -572,10 +642,10 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                                             </tr>
                                             {/* 11 july 2024 */}
                                             <tr>
-                                                <td className="pl-3">Additional Cost in dollors ($)</td>
-                                                {this.state.formData.IsIndepSub && <td><input className="form-control IsIndepSub" onChange={this.handleNumberChange} name='AdditionalCostDolr_IndepSub' value={this.state.formData.AdditionalCostDolr_IndepSub || ''} placeholder="" type="text" required aria-errormessage="'Indep/Sub - Additional Cost ($)' cannot be blank." maxLength={5} /></td>}
-                                                {this.state.formData.IsW2Hourly && <td><input className="form-control IsW2Hourly" onChange={this.handleNumberChange} name='AdditionalCostDolr_W2Hourly' value={this.state.formData.AdditionalCostDolr_W2Hourly || ''} placeholder="" type="text" required aria-errormessage="'W2-Hourly - Additional Cost ($)' cannot be blank." maxLength={5} /></td>}
-                                                {this.state.formData.IsW2HourlyPlus && <td><input className="form-control IsW2HourlyPlus" onChange={this.handleNumberChange} name='AdditionalCostDolr_W2HourlyPlus' value={this.state.formData.AdditionalCostDolr_W2HourlyPlus || ''} placeholder="" type="text" required aria-errormessage="'W2-Hourly Plus - Additional Cost ($)' cannot be blank." maxLength={5} /></td>}
+                                                <td className="pl-3">Additional Cost in Dollars ($)</td>
+                                                {this.state.formData.IsIndepSub && <td><input className="form-control IsIndepSub" onChange={this.handleNumberChange} name='AdditionalCostDolr_IndepSub' value={this.state.formData.AdditionalCostDolr_IndepSub || ''} placeholder="" type="text" required aria-errormessage="'Indep/Sub - Additional Cost in Dollars ($)' cannot be blank." maxLength={5} /></td>}
+                                                {this.state.formData.IsW2Hourly && <td><input className="form-control IsW2Hourly" onChange={this.handleNumberChange} name='AdditionalCostDolr_W2Hourly' value={this.state.formData.AdditionalCostDolr_W2Hourly || ''} placeholder="" type="text" required aria-errormessage="'W2-Hourly - Additional Cost in Dollars ($)' cannot be blank." maxLength={5} /></td>}
+                                                {this.state.formData.IsW2HourlyPlus && <td><input className="form-control IsW2HourlyPlus" onChange={this.handleNumberChange} name='AdditionalCostDolr_W2HourlyPlus' value={this.state.formData.AdditionalCostDolr_W2HourlyPlus || ''} placeholder="" type="text" required aria-errormessage="'W2-Hourly Plus - Additional Cost in Dollars ($)' cannot be blank." maxLength={5} /></td>}
                                                 {this.state.formData.IsSalary && <td><input className="form-control IsSalary" onChange={this.handleNumberChange} name='AdditionalCostDolr_Salary' value={this.state.formData.AdditionalCostDolr_Salary || ''} placeholder="" type="text" required aria-errormessage="'Salary - Additional Cost ($)' cannot be blank." maxLength={5} /></td>}
                                             </tr>
                                             {/* ---------------- */}
@@ -623,6 +693,27 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                                     <button type="button" onClick={this.handleSubmit} className="btn btn-submit">Submit</button>
                                     <button type="button" onClick={this.cancelHandler} className="btn btn-secondary">Cancel</button>
                                 </div>
+                                {this.state.AuditHistory.length > 0 ? <><div className="p-2">
+                                    <h4>History</h4>
+                                </div><div>
+                                        <table className="table table-bordered m-0 timetable">
+                                            <thead style={{ borderBottom: "4px solid #444444" }}>
+                                                <tr>
+                                                    {/* <th className="">Action By</th> */}
+                                                    <th className="" style={{ width: '250px' }}>Action By</th>
+                                                    {/* <th className="" style={{ width: '150px' }}>Status</th> */}
+                                                    <th className="" style={{ width: '250px' }}>Date & Time (EST)</th>
+                                                    <th className="">Comments</th>
+ 
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.auditHistory()}
+ 
+                                            </tbody>
+                                        </table>
+                                    </div></> : ""
+                                }
                             </div>
                         </div>
                         {/* </div> */}
