@@ -173,7 +173,7 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
             var query = "(Title eq '" + this.state.formData.Title + "' and IsActive eq 1)" + ((this.props.match.params.id !== undefined && this.props.match.params.id !== '') ? " and ID  ne " + this.props.match.params.id : "");
             sp.web.lists.getByTitle("Customers").items.select("Title", "IsActive", "ID").filter(query).getAll().then((dupres) => {
                 if (dupres.length > 0) {
-                    this.setState({ showLabel: true, errorMessage: "Client already exists'",loading: false });
+                    this.setState({ showLabel: true, errorMessage: "Client already exists",loading: false });
                     // console.log("duplicate client");
                     return false;
                 }
@@ -221,6 +221,10 @@ class ClientMaster extends React.Component<ClientMasterProps, {}> {
                                         isRedirect: true,
                                         isListTable: true
                                     });
+                                    setTimeout(() => {
+                                        document.getElementById("modalclose").click();
+                                    }, 1000);
+                                    console.log(res);
                                 })
                                 .catch((err) => {
                                     console.log('Failed to add');
